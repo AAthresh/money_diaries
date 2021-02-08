@@ -61,6 +61,7 @@ class Diary:
         :return:
         """
         final_diary = {}
+        final_basic_info = {}
         for diary_link in self.links:
             request_url = ''.join([self.base_url, diary_link])
 
@@ -74,7 +75,7 @@ class Diary:
                 occupation_index = 0
                 day_one_index = 0
                 for i, d in enumerate(divs):
-                    if 'occupation' or 'industry' in d.text.lower():
+                    if 'occupation' in d.text.lower():
                         occupation_index = i
                     elif 'day one' in d.text.lower():
                         day_one_index = i
@@ -104,6 +105,8 @@ class Diary:
                 for div in basic_divs:
                     basic_info.update(parser(div))
 
+                final_basic_info[diary_link.replace('/en-us/', '')] = basic_info
+
                 # Extract the diaries
                 diary_divs = divs[day_one_index:]
                 diaries = {}
@@ -128,13 +131,15 @@ class Diary:
                             key = f'{result[0]}'
                             diaries[start_index][key] = d.text.lower().replace(result[0], '').strip()
 
-                basic_info.update(diaries)
-                final_diary[diary_link.replace('/en-us/', '')] = basic_info
+                final_diary[diary_link.replace('/en-us/', '')] = diaries
             except:
                 print(f'Error parsing {diary_link}')
                 continue
 
-        with open('result.json', 'w') as fp:
+        with open('./data/raw_basic_info.json', 'w') as fp:
+            json.dump(final_basic_info, fp)
+
+        with open('./data/raw_diaries.json', 'w') as fp:
             json.dump(final_diary, fp)
 
 
