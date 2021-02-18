@@ -136,7 +136,7 @@ class Diary:
                 print(f'Error parsing {diary_link}')
                 continue
 
-        with open('./data/raw_basic_info.json', 'w') as fp:
+        with open('./data/raw_header.json', 'w') as fp:
             json.dump(final_basic_info, fp)
 
         with open('./data/raw_diaries.json', 'w') as fp:
